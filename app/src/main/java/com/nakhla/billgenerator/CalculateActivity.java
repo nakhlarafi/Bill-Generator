@@ -20,18 +20,22 @@ import android.widget.TextView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-public class CalculateActivity extends AppCompatActivity implements View.OnClickListener {
+public class CalculateActivity extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
 
     LinearLayout layoutList;
+    EditText dummy;
     Button buttonAdd,buttonSubmitList;
     //List<String> teamList = new ArrayList<>();
-    public static int serialNo = 0;
+    public int serialNo = 0;
     EditText ed;
     List<EditText> allEds = new ArrayList<EditText>();
     HashMap<String, String> hashMap;
+    String dateSet = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,22 @@ public class CalculateActivity extends AppCompatActivity implements View.OnClick
     }
 
 
+    public void showDatePickerDialog(){
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                this,
+                Calendar.getInstance().get(Calendar.YEAR),
+                Calendar.getInstance().get(Calendar.MONTH),
+                Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
+    }
+
+    @Override
+    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+        dateSet = "" + i2 + "/" + (i1+1) + "/" + i;
+        dummy.setText(dateSet);
+        System.out.println(dateSet+"!!!!!!!!!!!!!");
+    }
 
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
@@ -65,10 +85,12 @@ public class CalculateActivity extends AppCompatActivity implements View.OnClick
         TextView serialText = (EditText) addViewCalc.findViewById(R.id.serial_text);
         ++serialNo;
         serialText.setText(Integer.toString(serialNo));
-        EditText editTextDate = (EditText) addViewCalc.findViewById(R.id.edit_date);
+        final EditText editTextDate = (EditText) addViewCalc.findViewById(R.id.edit_date);
         TextView textViewDate = (TextView) addViewCalc.findViewById(R.id.date_text);
         Button btnDate = (Button) addViewCalc.findViewById(R.id.date_btn);
         editTextDate.generateViewId();
+        dummy = editTextDate;
+        System.out.println(dateSet+"*********************565655");
         allEds.add(editTextDate);
 
         EditText editTextChalan = (EditText) addViewCalc.findViewById(R.id.edit_bill);
@@ -118,8 +140,16 @@ public class CalculateActivity extends AppCompatActivity implements View.OnClick
             }
         });
 
+        btnDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePickerDialog();
+            }
+        });
+
         layoutList.addView(addViewCalc);
     }
+
 
     public void setButtonSubmitList(View view){
         int sl = 1;
@@ -141,7 +171,7 @@ public class CalculateActivity extends AppCompatActivity implements View.OnClick
         for (int c=7;c<serialNo*8;c+=8){
             double a = Double.parseDouble(arr[c-2]);
             double b = Double.parseDouble(arr[c-3]);
-            arr[c-1] = Double.toString(a*b);
+            arr[c-1] = String.format("%.2f", a*b);
             //arr[c] = Integer.toString(sl++);
         }
 
@@ -157,6 +187,7 @@ public class CalculateActivity extends AppCompatActivity implements View.OnClick
         --serialNo;
         layoutList.removeView(v);
     }
+
 
 
 }

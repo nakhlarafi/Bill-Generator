@@ -47,9 +47,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.function.LongFunction;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,6 +63,25 @@ public class MainActivity extends AppCompatActivity {
 
     DateTimeFormatter dtf;
     LocalDateTime now;
+
+    public static final String[] units = { "", "One", "Two", "Three", "Four",
+            "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve",
+            "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen",
+            "Eighteen", "Nineteen" };
+
+    public static final String[] tens = {
+            "",         // 0
+            "",     // 1
+            "Twenty",   // 2
+            "Thirty",   // 3
+            "Forty",    // 4
+            "Fifty",    // 5
+            "Sixty",    // 6
+            "Seventy",  // 7
+            "Eighty",   // 8
+            "Ninety"    // 9
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +128,34 @@ public class MainActivity extends AppCompatActivity {
                 .check();
     }
 
+    public static String convert(final int n) {
+        if (n < 0) {
+            return "Minus " + convert(-n);
+        }
+
+        if (n < 20) {
+            return units[n];
+        }
+
+        if (n < 100) {
+            return tens[n / 10] + ((n % 10 != 0) ? " " : "") + units[n % 10];
+        }
+
+        if (n < 1000) {
+            return units[n / 100] + " Hundred" + ((n % 100 != 0) ? " " : "") + convert(n % 100);
+        }
+
+        if (n < 100000) {
+            return convert(n / 1000) + " Thousand" + ((n % 10000 != 0) ? " " : "") + convert(n % 1000);
+        }
+
+        if (n < 10000000) {
+            return convert(n / 100000) + " Lakh" + ((n % 100000 != 0) ? " " : "") + convert(n % 100000);
+        }
+
+        return convert(n / 10000000) + " Crore" + ((n % 10000000 != 0) ? " " : "") + convert(n % 10000000);
+    }
+
     public void calculateTotal(){
         double qnt = 0;
         double tk = 0;
@@ -145,11 +194,11 @@ public class MainActivity extends AppCompatActivity {
             BaseFont fontName = BaseFont.createFont("assets/fonts/brandon_medium.otf",
                     "UTF-8",BaseFont.EMBEDDED);
             //Create Title
-            Font titleFont = new Font(fontName,15.0f,Font.NORMAL, BaseColor.BLACK);
+            Font titleFont = new Font(fontName,18.0f,Font.BOLD, BaseColor.BLACK);
             addNewItem(document,"M/S DOLPHIN CAREER ENTERPRISE", Element.ALIGN_CENTER,titleFont);
 
             //Name
-            Font titleFontName = new Font(fontName,10.0f,Font.NORMAL, BaseColor.BLACK);
+            Font titleFontName = new Font(fontName,14.0f,Font.BOLD, BaseColor.BLACK);
             addNewItem(document,"Proprietor: MD IQBAL HOSSAIN (JIBON)", Element.ALIGN_CENTER,titleFontName);
 
             addNewItem(document,"Address: 103 Pathantuli, Moshjid Road, Narayanganj", Element.ALIGN_CENTER,titleFontName);
@@ -157,10 +206,10 @@ public class MainActivity extends AppCompatActivity {
             addNewItem(document,"Mobile: 01711074444, 01823058478", Element.ALIGN_CENTER,titleFontName);
             addLineSeperator(document);
 
-            Font orderNumberValueFont = new Font(fontName,10.0f,Font.NORMAL,BaseColor.BLACK);
+            Font orderNumberValueFont = new Font(fontName,14.0f,Font.NORMAL,BaseColor.BLACK);
 
             //ADD more
-            Font orderNumberFont = new Font(fontName,10.0f,Font.NORMAL,colorAccent);
+            Font orderNumberFont = new Font(fontName,14.0f,Font.BOLD,BaseColor.BLACK);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 addNewItemWithLeftAndRight(document,"To:","Date: "+dtf.format(now),orderNumberFont,orderNumberFont);
             }
@@ -194,10 +243,10 @@ public class MainActivity extends AppCompatActivity {
                     "Remark"};
 
 
-            Font fontH1 = new Font(fontName, 8.0f, Font.NORMAL);
+            Font fontH1 = new Font(fontName, 12.0f, Font.NORMAL);
             PdfPTable table = new PdfPTable(8);
             table.setWidthPercentage(100);
-            table.setWidths(new float[] { 1, 2,1,3,3,2,3,1 });
+            table.setWidths(new float[] { 1, 2,2,3,3,2,3,2 });
             for(int aw = 0; aw < 8; aw++){
                 table.addCell(new PdfPCell(new Phrase(colNames[aw],fontH1)));
             }
@@ -211,16 +260,24 @@ public class MainActivity extends AppCompatActivity {
 
             addNewLine(document);
 
-            Font totalAmountValueFont = new Font(fontName,10.0f,Font.NORMAL,BaseColor.BLACK);
+            Font totalAmountValueFont = new Font(fontName,12.0f,Font.NORMAL,BaseColor.BLACK);
             //Item 1
             addNewItemWithLeftAndRight(document,"Total: ","",titleFont,orderNumberValueFont);
             addNewItemWithLeftAndRight(document,"Quantity(cft)",totalQuantityStr,totalAmountValueFont,orderNumberValueFont);
-            addNewItemWithLeftAndRight(document,"Amount",totalAmount,totalAmountValueFont,orderNumberValueFont);
+            addNewItemWithLeftAndRight(document,"Amount",String.format("%.2f", Double.parseDouble(totalAmount)),totalAmountValueFont,orderNumberValueFont);
 
             addNewLine(document);
 
+            //String inWord = convert((long) Double.parseDouble(totalAmount));
+
             //Signature
-            addNewItem(document,"In Word: Four Lakh Seventy Thousand four hundred taka only",
+            double doubleNumber = Double.parseDouble(totalAmount);
+            int intPart = (int) doubleNumber;
+            String numberD = String.valueOf(doubleNumber);
+            numberD = numberD.substring ( numberD.indexOf ( "." ) +1);
+            System.out.println(intPart+"*********"+numberD);
+            addNewItem(document,"In Words: "+convert(intPart)+ " point "+
+                            convert(Integer.parseInt(numberD))+" Tk.",
                     Element.ALIGN_LEFT,totalAmountValueFont);
 
             addNewLine(document);
