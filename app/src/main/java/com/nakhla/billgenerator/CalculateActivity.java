@@ -85,6 +85,7 @@ public class CalculateActivity extends AppCompatActivity implements View.OnClick
         TextView serialText = (EditText) addViewCalc.findViewById(R.id.serial_text);
         ++serialNo;
         serialText.setText(Integer.toString(serialNo));
+        serialText.setEnabled(false);
         final EditText editTextDate = (EditText) addViewCalc.findViewById(R.id.edit_date);
         TextView textViewDate = (TextView) addViewCalc.findViewById(R.id.date_text);
         Button btnDate = (Button) addViewCalc.findViewById(R.id.date_btn);
@@ -173,6 +174,10 @@ public class CalculateActivity extends AppCompatActivity implements View.OnClick
             double b = Double.parseDouble(arr[c-3]);
             arr[c-1] = String.format("%.2f", a*b);
             //arr[c] = Integer.toString(sl++);
+        }
+
+        for (int c=0;c<serialNo*8;c++){
+            System.out.println(arr[c]);
         }
 
 

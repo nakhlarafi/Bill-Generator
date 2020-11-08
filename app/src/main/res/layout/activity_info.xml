@@ -30,6 +30,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="12dp"
                 android:hint="Bill Number"
+                android:digits="0123456789."
+                android:inputType="numberDecimal"
                 android:textSize="30dp" />
 
         </LinearLayout>
@@ -182,6 +184,8 @@
                 android:id="@+id/edit_po"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:digits="0123456789."
+                android:inputType="numberDecimal"
                 android:layout_marginLeft="12dp"
                 android:hint="PO Number"
                 android:textSize="30dp" />
@@ -189,13 +193,14 @@
         </LinearLayout>
 
         <Button
+            android:background="@drawable/shape"
             android:onClick="nextPage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:layout_margin="12dp"
             android:text="Next"
-            android:textSize="30dp" />
+            android:textSize="20dp" />
 
     </LinearLayout>
 

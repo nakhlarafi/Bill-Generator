@@ -164,7 +164,8 @@ public class MainActivity extends AppCompatActivity {
             tk = tk + Double.parseDouble(stringArray[i-1]);
         }
         totalQuantityStr = Double.toString(qnt);
-        totalAmount = Double.toString(tk);
+        totalAmount = String.format("%.2f", tk);
+        System.out.println(totalAmount+"$$$$$$$$$");
     }
 
     private void createPDFFile(String path) {
@@ -195,6 +196,8 @@ public class MainActivity extends AppCompatActivity {
                     "UTF-8",BaseFont.EMBEDDED);
             //Create Title
             Font titleFont = new Font(fontName,18.0f,Font.BOLD, BaseColor.BLACK);
+            Font titleFont2 = new Font(fontName,8.0f,Font.NORMAL, BaseColor.BLACK);
+            addNewItem(document,"Bismillahir Rahmanir Rahim", Element.ALIGN_CENTER,titleFont2);
             addNewItem(document,"M/S DOLPHIN CAREER ENTERPRISE", Element.ALIGN_CENTER,titleFont);
 
             //Name
@@ -246,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
             Font fontH1 = new Font(fontName, 12.0f, Font.NORMAL);
             PdfPTable table = new PdfPTable(8);
             table.setWidthPercentage(100);
-            table.setWidths(new float[] { 1, 2,2,3,3,2,3,2 });
+            table.setWidths(new float[] { 1,3,2,3,3,2,3,2 });
             for(int aw = 0; aw < 8; aw++){
                 table.addCell(new PdfPCell(new Phrase(colNames[aw],fontH1)));
             }
@@ -263,8 +266,8 @@ public class MainActivity extends AppCompatActivity {
             Font totalAmountValueFont = new Font(fontName,12.0f,Font.NORMAL,BaseColor.BLACK);
             //Item 1
             addNewItemWithLeftAndRight(document,"Total: ","",titleFont,orderNumberValueFont);
-            addNewItemWithLeftAndRight(document,"Quantity(cft)",totalQuantityStr,totalAmountValueFont,orderNumberValueFont);
-            addNewItemWithLeftAndRight(document,"Amount",String.format("%.2f", Double.parseDouble(totalAmount)),totalAmountValueFont,orderNumberValueFont);
+            addNewItemWithLeftAndRight(document,"Quantity(cft)","= "+String.format("%.2f", Double.parseDouble(totalQuantityStr))+" cft",totalAmountValueFont,orderNumberValueFont);
+            addNewItemWithLeftAndRight(document,"Amount","= "+String.format("%.2f", Double.parseDouble(totalAmount))+" Tk",totalAmountValueFont,orderNumberValueFont);
 
             addNewLine(document);
 
@@ -277,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
             numberD = numberD.substring ( numberD.indexOf ( "." ) +1);
             System.out.println(intPart+"*********"+numberD);
             addNewItem(document,"In Words: "+convert(intPart)+ " point "+
-                            convert(Integer.parseInt(numberD))+" Tk.",
+                            convert(Integer.parseInt(numberD))+" Tk Only.",
                     Element.ALIGN_LEFT,totalAmountValueFont);
 
             addNewLine(document);
@@ -303,6 +306,9 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        catch (Exception e){
+            Toast.makeText(this,e.toString(), Toast.LENGTH_SHORT).show();
         }
     }
 
